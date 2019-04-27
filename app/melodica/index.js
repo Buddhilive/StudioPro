@@ -1,3 +1,7 @@
+/*
+නමෝ බුද්ධාය!
+*/
+
 //Loading Checkpoints
 var music_machine = new mm.MusicRNN('../checkpoints/melody_rnn');
 
@@ -13,18 +17,18 @@ var seqWidth = window.innerWidth - 400;
 var seqHeight = window.innerHeight - 180;
 
 var config = {
-  noteHeight: 10,
-  pixelsPerTimeStep: 10,
-  noteSpacing: 1,
-  noteRGB: '73, 109, 145',
-  activeNoteRGB: '255, 111, 0',
+    noteHeight: 10,
+    pixelsPerTimeStep: 10,
+    noteSpacing: 1,
+    noteRGB: '73, 109, 145',
+    activeNoteRGB: '255, 111, 0',
 }
 
 var grandSequencer = new mm.PianoRollCanvasVisualizer(Melody1, document.getElementById('grandMatrix'), config);
 
 var melodyPlayer = new mm.Player(false, {
-  run: (note) => grandSequencer.redraw(note),
-  stop: () => {playSequence();}
+    run: (note) => grandSequencer.redraw(note),
+    stop: () => {playSequence();}
 });
 
 var dialerVar = new Nexus.Dial('#dialerVar' ,{
@@ -85,35 +89,35 @@ var midiUrl = "";
 //Program
 function playSequence() {
     //grandSequencer.start(playTempo);
-	if (melodyPlayer.getPlayState() == 'stopped') {
-		melodyPlayer.start(melodySeq, playTempo);
-	} else if (melodyPlayer.getPlayState() == 'paused') {
-		melodyPlayer.resume();
-	}
-	
+    if (melodyPlayer.getPlayState() == 'stopped') {
+        melodyPlayer.start(melodySeq, playTempo);
+    } else if (melodyPlayer.getPlayState() == 'paused') {
+        melodyPlayer.resume();
+    }
+
     document.getElementById("btnStop").disabled = false;
-	document.getElementById("btnPause").disabled = false;
+    document.getElementById("btnPause").disabled = false;
     document.getElementById("btnPlay").disabled = true;
 }
 
 function pauseSequence() {
     //grandSequencer.start(playTempo);
-	melodyPlayer.pause();
+    melodyPlayer.pause();
     document.getElementById("btnStop").disabled = false;
-	document.getElementById("btnPause").disabled = true;
+    document.getElementById("btnPause").disabled = true;
     document.getElementById("btnPlay").disabled = false;
 }
 
 function stopSequence() {
     //grandSequencer.stop();
-	melodyPlayer.stop();
+    melodyPlayer.stop();
     document.getElementById("btnPlay").disabled = false;
-	document.getElementById("btnPause").disabled = true;
+    document.getElementById("btnPause").disabled = true;
     document.getElementById("btnStop").disabled = true;
 }
 
 function openSettings() {
-	document.querySelector('.mdl-layout__obfuscator').classList.add("is-visible");
+    document.querySelector('.mdl-layout__obfuscator').classList.add("is-visible");
     document.querySelector('.mdl-layout__drawer').classList.add("is-visible");
     document.getElementById("theDrawer").setAttribute('aria-hidden', false);
 }
@@ -124,8 +128,8 @@ async function generateMusic() {
     //notification_main.start();
 
     if (music_machine.isInitialized() == true) {
-		
-		melodySeq = await music_machine.continueSequence(sampleMelody, 64, rnn_temperature);
+
+        melodySeq = await music_machine.continueSequence(sampleMelody, 64, rnn_temperature);
 
         grandSequencer = new mm.PianoRollCanvasVisualizer(melodySeq, document.getElementById('grandMatrix'), config);
 
@@ -160,25 +164,25 @@ function updateSetup() {
 };
 
 function saveMIDI () {
-	const sampleSeq = mm.sequences.unquantizeSequence(melodySeq, playTempo);
-	//const sampleSeq = mm.sequences.quantizeNoteSequence(melodySeq, 4);
-        const midiB = mm.sequenceProtoToMidi(sampleSeq);
-        const fileB = new Blob([midiB], {type: 'audio/midi'});
-        saveAs(fileB, 'melody_by_buddhilive' + Date.now() + '.mid');
+    const sampleSeq = mm.sequences.unquantizeSequence(melodySeq, playTempo);
+    //const sampleSeq = mm.sequences.quantizeNoteSequence(melodySeq, 4);
+    const midiB = mm.sequenceProtoToMidi(sampleSeq);
+    const fileB = new Blob([midiB], {type: 'audio/midi'});
+    saveAs(fileB, 'melody_by_buddhilive' + Date.now() + '.mid');
 };
 
 async function setMelody() {
-	var sampleMelodyA = await mm.urlToNoteSequence(midiUrl);
-	var sampleMelodyB = mm.sequences.quantizeNoteSequence(sampleMelodyA, 4);
-	sampleMelody = mm.sequences.trim(sampleMelodyB, 0, 32, true);
-	//console.log('melody updated');
+    var sampleMelodyA = await mm.urlToNoteSequence(midiUrl);
+    var sampleMelodyB = mm.sequences.quantizeNoteSequence(sampleMelodyA, 4);
+    sampleMelody = mm.sequences.trim(sampleMelodyB, 0, 32, true);
+    //console.log('melody updated');
 };
 
 function previewFile() {
     var file    = document.querySelector('input[type=file]').files[0];
     var reader  = new FileReader();
     //console.log(file.name +  " is " + file.size/1024 + "kb");
-	document.getElementById('loadedFile').innerHTML = file.name;
+    document.getElementById('loadedFile').innerHTML = file.name;
 
     reader.addEventListener("load", function () {
         //var playFile = new mm.midiToSequenceProto(reader.result);
