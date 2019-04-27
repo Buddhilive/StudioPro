@@ -1,15 +1,7 @@
 //Loading Checkpoints
-//var drum_machine = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn');
+var drum_machine = new mm.MusicRNN('../checkpoints/drumkit_rnn');
 
-//var drum_machine = new mm.MusicRNN('https://storage.googleapis.com/download.magenta.tensorflow.org/tfjs_checkpoints/music_rnn/drum_kit_rnn');
-
-var drum_machine = new mm.MusicRNN('checkpoints/drumkit_rnn');
-
-//var music_machine = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn');
-
-var music_machine = new mm.MusicRNN('checkpoints/melody_rnn');
-
-Promise.all([drum_machine.initialize(),music_machine.initialize()]).then(function() {
+Promise.all([drum_machine.initialize()]).then(function() {
     setTimeout(function(){ 
         document.getElementById("theOverlay").style.display = "none";
         document.getElementById("theModal").style.display = "none";
@@ -23,7 +15,7 @@ var seqHeight = window.innerHeight - 180;
 var grandSequencer = new Nexus.Sequencer('#grandMatrix', {
     'size': [seqWidth, seqHeight],
     'mode': 'toggle',
-    'rows': 45,
+    'rows': 9,
     'columns': 32
 });
 grandSequencer.colorize("accent","#FF6F00");
@@ -63,35 +55,33 @@ document.getElementById("btnSettings").onclick = function() {updateSetup()};
 var btnSave = document.getElementById("btnSave");
 btnSave.onclick = function() {saveMIDI()};
 var melodyMenu = document.getElementById("melodyMenu");
-var saveMenu = document.getElementById("saveMenu");
 var notification = document.querySelector('.mdl-js-snackbar');
 
 //initialize sounds
-var drum_kick = new Tone.Player("sounds/kick.mp3").toMaster();
-var drum_snare = new Tone.Player("sounds/snare.mp3").toMaster();
+var drum_kick = new Tone.Player("../sounds/kick.mp3").toMaster();
+var drum_snare = new Tone.Player("../sounds/snare.mp3").toMaster();
 
-var drum_tom_high = new Tone.Player("sounds/tom-high.mp3").toMaster();
-var drum_tom_mid = new Tone.Player("sounds/tom-mid.mp3").toMaster();
-var drum_tom_low = new Tone.Player("sounds/tom-low.mp3").toMaster();
+var drum_tom_high = new Tone.Player("../sounds/tom-high.mp3").toMaster();
+var drum_tom_mid = new Tone.Player("../sounds/tom-mid.mp3").toMaster();
+var drum_tom_low = new Tone.Player("../sounds/tom-low.mp3").toMaster();
 
-var drum_hihat_open = new Tone.Player("sounds/hihat-open.mp3").toMaster();
-var drum_hihat_closed = new Tone.Player("sounds/hihat-closed.mp3").toMaster();
+var drum_hihat_open = new Tone.Player("../sounds/hihat-open.mp3").toMaster();
+var drum_hihat_closed = new Tone.Player("../sounds/hihat-closed.mp3").toMaster();
 
-var drum_clap = new Tone.Player("sounds/clap.mp3").toMaster();
-var drum_ride = new Tone.Player("sounds/ride.ogg").toMaster();
+var drum_clap = new Tone.Player("../sounds/clap.mp3").toMaster();
+var drum_ride = new Tone.Player("../sounds/ride.ogg").toMaster();
 
-var notification_main = new Tone.Player("sounds/slow-spring-board.mp3").toMaster();
-var notification_end = new Tone.Player("sounds/jingle-bells-sms.mp3").toMaster();
+var notification_main = new Tone.Player("../sounds/slow-spring-board.mp3").toMaster();
+var notification_end = new Tone.Player("../sounds/jingle-bells-sms.mp3").toMaster();
 
 var toneynth = new Tone.Synth().toMaster();
 
 
 //initializing variables
 var drumSeq;
-var melodySeq;
 var playTempo = numberTemp.value;
 var rnn_temperature = numberVar.value;
-var sampleMelody = Melody1;
+var sampleDrumkit = Drumkit1;
 
 //melodyMenu.innerHTML = "Melody1";
 
@@ -111,11 +101,10 @@ function stopSequence() {
 
 async function generateMusic() {
     btnSave.disabled = true;
-    saveMenu.disabled = true;
 
     notification_main.start();
 
-    if (drum_machine.isInitialized() == true && music_machine.isInitialized() == true) {
+    if (drum_machine.isInitialized() == true) {
 
 
         /*let drumSeq = await drum_machine.sample(1, 0.5);
@@ -125,8 +114,8 @@ async function generateMusic() {
 
         //var music_qns = mm.sequences.quantizeNoteSequence(Melody5, 1);
 
-        drumSeq = await drum_machine.continueSequence(Drumkit1, 32, rnn_temperature);
-        melodySeq = await music_machine.continueSequence(sampleMelody, 32, rnn_temperature);
+        drumSeq = await drum_machine.continueSequence(sampleDrumkit, 32, rnn_temperature);
+        
 
         //console.log(JSON.stringify(melodySeq));
 
@@ -170,18 +159,6 @@ async function generateMusic() {
             //console.log("Column:"+counters+" Row:" + rowCell);
         }
 
-
-        for (var i = 0; melodySeq.notes.length > i; i++) {
-            var counters = melodySeq.notes[i].quantizedStartStep;
-            var pitch = melodySeq.notes[i].pitch;
-            var rowCell = pitch - 48;
-
-            //new mm.Player().start(drumSeq);
-
-            grandSequencer.matrix.set.cell(counters, rowCell, 1);
-            //console.log("Column:"+counters+" Row:" + rowCell);
-        }
-
         notification.MaterialSnackbar.showSnackbar(
             {
                 message: 'Music Generated!',
@@ -191,7 +168,6 @@ async function generateMusic() {
 
         notification_end.start();
         btnSave.disabled = false;
-        saveMenu.disabled =false;
 
         /*const teapot = await mm.urlToNoteSequence("midi/DRUM1.mid");
 		const drums_qns = mm.sequences.quantizeNoteSequence(teapot, 4);
@@ -205,40 +181,34 @@ async function generateMusic() {
 
 grandSequencer.on('step', function(v) {
     //console.log(v);
-    if (v[45] == 1) {
+    if (v[8] == 1) {
         drum_kick.start();
     }
-    if (v[44] == 1) {
+    if (v[7] == 1) {
         drum_snare.start();
     }
-    if (v[43] == 1) {
+    if (v[6] == 1) {
         drum_tom_high.start();
     }
-    if (v[42] == 1) {
+    if (v[5] == 1) {
         drum_tom_mid.start();
     }
-    if (v[41] == 1) {
+    if (v[4] == 1) {
         drum_tom_low.start();
     }
-    if (v[40] == 1) {
+    if (v[3] == 1) {
         drum_hihat_open.start();
     }
-    if (v[39] == 1) {
+    if (v[2] == 1) {
         drum_hihat_closed.start();
     }
-    if (v[38] == 1) {
+    if (v[1] == 1) {
         drum_clap.start();
     }
-    if (v[37] == 1) {
+    if (v[0] == 1) {
         drum_ride.start();
     }
-    for (var i=0; i < 37; i++) {
-        var pitch = i + 48;
-        if (v[i] == 1) {
-            toneynth.triggerAttackRelease(Tone.Frequency(pitch, "midi").toFrequency(), '8n');
-        }
-    }
-
+    
 });
 
 function updateSetup() {
@@ -262,42 +232,29 @@ function updateSetup() {
 function melodyUpdate() {
     //console.log('change', melodyMenu.value);
     switch (melodyMenu.value) {
-        case "Melody1":
-            sampleMelody = Melody1;
+        case "Drumkit1":
+            sampleDrumkit = Drumkit1;
             break;
-        case "Melody2":
-            sampleMelody = Melody2;
+        case "Drumkit2":
+            sampleDrumkit = Drumkit2;
             break;
-        case "Melody3":
-            sampleMelody = Melody3;
+        case "Drumkit3":
+            sampleDrumkit = Drumkit3;
             break;
-        case "Melody4":
-            sampleMelody = Melody4;
+        case "Drumkit4":
+            sampleDrumkit = Drumkit4;
             break;
-        case "Melody5":
-            sampleMelody = Melody5;
+        case "Drumkit5":
+            sampleDrumkit = Drumkit5;
             break;
     }
 };
 
-function saveUpdate() {
-    //console.log(saveMenu);
-    saveMenu.value = saveMenu.value
-}
 
 function saveMIDI () {
-    var midiType = saveMenu.value;
-
-    if (midiType == 'drums') {
         const midiB = mm.sequenceProtoToMidi(drumSeq);
         const fileB = new Blob([midiB], {type: 'audio/midi'});
         saveAs(fileB, 'drums_by_buddhilive' + Date.now() + '.mid');
-    } else if (midiType == 'melody') {
-        const midiB = mm.sequenceProtoToMidi(melodySeq);
-        const fileB = new Blob([midiB], {type: 'audio/midi'});
-        saveAs(fileB, 'melody_by_buddhilive' + Date.now() + '.mid');
-    }
-
 }
 
 grandSequencer.on('change', function(v) {
