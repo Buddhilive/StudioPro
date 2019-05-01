@@ -3,7 +3,7 @@
 */
 
 //Loading Checkpoints
-var music_machine = new mm.MusicRNN('../checkpoints/melody_rnn');
+var music_machine = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn');
 
 Promise.all([music_machine.initialize()]).then(function() {
     setTimeout(function(){ 
@@ -68,13 +68,6 @@ var btnSave = document.getElementById("btnSave");
 btnSave.onclick = function() {saveMIDI()};
 //var melodyMenu = document.getElementById("melodyMenu");
 var notification = document.querySelector('.mdl-js-snackbar');
-
-//initialize sounds
-var notification_main = new Tone.Player("../sounds/slow-spring-board.mp3").toMaster();
-var notification_end = new Tone.Player("../sounds/jingle-bells-sms.mp3").toMaster();
-
-var toneynth = new Tone.Synth().toMaster();
-
 
 //initializing variables
 var melodySeq;
