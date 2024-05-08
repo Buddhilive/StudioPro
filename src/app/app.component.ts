@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import * as magenta from '@magenta/music/es6';
+import { MusicVAE, Player } from '@magenta/music/es6';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +11,9 @@ import * as magenta from '@magenta/music/es6';
 })
 export class AppComponent {
   generateMusic() {
-    const model = new magenta.MusicVAE('assets/files/checkpoints/mel_4bar_med_lokl_q2');
-    const player = new magenta.Player();
+    const model = new MusicVAE('assets/files/checkpoints/mel_4bar_med_lokl_q2');
+    const player = new Player();
+    
     model
       .initialize()
       .then(() => model.sample(1))
