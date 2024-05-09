@@ -1,0 +1,35 @@
+<nav class="bl-studio__sidenav" #sideNav>
+    <div class="bl-studio__logo">
+        Bl Studio
+        <i class="pi pi-bars" (click)="toggleSideNav(sideNav)"></i>
+    </div>
+    <div class="bl-studio__menu">
+        <ul class="bl-studio__ul">
+            <li class="bl-studio__li">
+                <i class="pi pi-home"></i>
+                <a href="#">
+                    Dashboard
+                </a>
+                <span class="tooltip">Dashboard</span>
+            </li>
+            <li class="bl-studio__li">
+                <i class="pi pi-home"></i>
+                <a href="#">
+                    Dashboard
+                </a>
+                <span class="tooltip">Dashboard</span>
+            </li>
+            <li class="bl-studio__li">
+                <i class="pi pi-home"></i>
+                <a href="#">
+                    Dashboard
+                </a>
+                <span class="tooltip">Dashboard</span>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main class="bl-studio__main">
+    <app-nav-bar></app-nav-bar>
+    <router-outlet></router-outlet>
+</main>
